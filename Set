@@ -1,0 +1,85 @@
+package SetCalculation;
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Set {
+    public static void main(String[] args)
+    {
+        //입력 받았을 때 숫자가 아닐 시 오류와 함께 메세지 출력.
+        try
+        {
+            Scanner sc = new Scanner(System.in);
+            //집합A의 원소를 입력받아 set에 저장후 -1 입력시 종료.
+            System.out.print("집합 A 입력: ");
+            ArrayList<Integer> setA = listSet(sc);
+
+            //집합B의 원소를 입력받아 set에 저장후 -1 입력시 종료.
+            System.out.print("집합 B 입력: ");
+            ArrayList<Integer> setB = listSet(sc);
+
+            ArrayList<Integer> union = union(setA, setB);
+            ArrayList<Integer> intersection = intersection(setA, setB);
+            ArrayList<Integer> relativeComplement = relativeComplementSet(setA, setB);
+
+
+            System.out.println("합집합: <" + union + " >");
+            System.out.println("교집합: <" + intersection + " >");
+            System.out.println("차집합: <" + relativeComplement + " >");
+            System.out.println("계속하려면 아무 키나 누르십시오 . . .");
+            sc.nextLine();
+            sc.close();
+            //계산한 값을 출력 후 아무 키나 누를시 종료.
+        }
+        catch(Exception e)
+        {
+            System.out.println("오류 발생 : " + e.getMessage());
+        }
+    }
+
+    // 집합 원소를 공백으로 구분하여 입력받는 메서드(음수 입력시 무시)
+    private static ArrayList<Integer> listSet(Scanner sc) {
+        ArrayList<Integer> set = new ArrayList<>();
+        String input = sc.nextLine(); // 한 줄 입력받기
+        String[] numbers = input.split(" "); // 공백 기준으로 나누기
+
+        for (String num : numbers) {
+            int number = Integer.parseInt(num);
+            if (number == -1) { // -1 입력 시 종료
+                break;
+            }
+            if (number >= 0 && !set.contains(number)) { // 음수 무시, 중복 제거
+                set.add(number);
+            }
+        }
+        return set;
+    }
+
+    private static ArrayList<Integer> union(ArrayList<Integer> setA, ArrayList<Integer> setB) {
+        ArrayList<Integer> union = new ArrayList<>(setA);
+        for (int element : setB) {
+            if (!union.contains(element)) { // setB의 원소가 union에 없으면 추가
+                union.add(element);
+            }
+        }
+        return union;
+    }
+
+    private static ArrayList<Integer> intersection(ArrayList<Integer> setA, ArrayList<Integer> setB) {
+        ArrayList<Integer> intersection = new ArrayList<>();
+        for (int element : setA) {
+            if (setB.contains(element)) { // 공통 원소만 추가
+                intersection.add(element);
+            }
+        }
+        return intersection;
+    }
+
+    // 차집합 (A - B) 계산 메서드
+    private static ArrayList<Integer> relativeComplementSet(ArrayList<Integer> setA, ArrayList<Integer> setB) {
+        ArrayList<Integer> relativeComplement = new ArrayList<>(setA);
+        relativeComplement.removeAll(setB); // setB의 원소를 제거
+        return relativeComplement;
+    }
+
+}
