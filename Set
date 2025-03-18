@@ -1,87 +1,187 @@
 package SetCalculation;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Set {
     public static void main(String[] args)
     {
-        //입력 받았을 때 숫자가 아닐 시 오류와 함께 메세지 출력.
         try
         {
             Scanner sc = new Scanner(System.in);
-            //집합A의 원소를 입력받아 set에 저장후 -1 입력시 종료.
+
+            // 집합 A 입력
             System.out.print("집합 A 입력: ");
-            ArrayList<Integer> setA = listSet(sc);
+            int[] setA = inputSet(sc);
 
-            //집합B의 원소를 입력받아 set에 저장후 -1 입력시 종료.
+            // 집합 B 입력
             System.out.print("집합 B 입력: ");
-            ArrayList<Integer> setB = listSet(sc);
+            int[] setB = inputSet(sc);
 
-            ArrayList<Integer> union = union(setA, setB);
-            ArrayList<Integer> intersection = intersection(setA, setB);
-            ArrayList<Integer> difference = relativeComplementSet(setA, setB);
+            // 합집합 계산
+            int[] union = unionSet(setA, setB);
 
+            // 교집합 계산
+            int[] intersection = intersectionSet(setA, setB);
 
-            System.out.println("합집합: <" + union + " >");
-            System.out.println("교집합: <" + intersection + " >");
-            System.out.println("차집합: <" + difference + " >");
+            // 차집합 계산 (A - B)
+            int[] difference = relativeComplementSet(setA, setB);
+
+            // 결과 출력
+            System.out.print("합집합: ");
+            printArray(union);
+
+            System.out.print("교집합: ");
+            printArray(intersection);
+
+            System.out.print("차집합: ");
+            printArray(difference);
+
             System.out.println("계속하려면 아무 키나 누르십시오 . . .");
-            sc.nextLine();
+            sc.nextLine(); // 계산한 값을 출력 후 아무 키 입력시 종료
             sc.close();
-            //계산한 값을 출력 후 아무 키나 누를시 종료.
-        }
-        catch(Exception e)
+        } catch (Exception e)
         {
-            System.out.println("오류 발생 : " + e.getMessage());
+            System.out.println("오류 발생: " + e.getMessage());
         }
     }
 
-    // 집합 원소를 공백으로 구분하여 입력받는 메서드(음수 입력시 무시)
-    private static ArrayList<Integer> listSet(Scanner sc) {
-        ArrayList<Integer> set = new ArrayList<>();
-        String input = sc.nextLine(); // 한 줄 입력받기
-        String[] numbers = input.split(" "); // 공백 기준으로 나누기
+    // 집합 원소를 입력받는 메서드 (공백으로 구분, -1 입력 시 종료)
+    private static int[] inputSet(Scanner sc)
+    {
+        String[] input = sc.nextLine().split(" ");
+        int[] tempSet = new int[input.length];
+        int size = 0;
 
-        for (String num : numbers) {
-            int number = Integer.parseInt(num);
-            if (number == -1) { // -1 입력 시 종료
-                break;
-            }
-            if (number >= 0 && !set.contains(number)) { // 음수 무시, 중복 제거
-                set.add(number);
+        for (String value : input)
+        {
+            try
+            {
+                int num = Integer.parseInt(value);
+                if (num == -1)
+                {
+                    break; // 입력 종료 조건
+                }
+                // 음수는 무시하고, 중복 확인 (중복이면 추가하지 않음)
+                if (num >= 0 && !isInArray(tempSet, size, num))
+                {
+                    tempSet[size++] = num;
+                }
+            } catch (NumberFormatException e)
+            {
+                System.out.println("유효하지 않은 숫자입니다.: " + value);
+                System.exit(0);
             }
         }
+        // 사용자 정의 복사 메서드를 사용하여 실제 크기의 배열 반환
+        int[] set = finalResult(tempSet, size);
         return set;
     }
 
-    //합집합 메서드
-    private static ArrayList<Integer> union(ArrayList<Integer> setA, ArrayList<Integer> setB) {
-        ArrayList<Integer> union = new ArrayList<>(setA);
-        for (int element : setB) {
-            if (!union.contains(element)) { // setB의 원소가 union에 없으면 추가
-                union.add(element);
+    // 중복 확인 메서드
+    private static boolean isInArray(int[] arr, int len, int value)
+    {
+        for (int i = 0; i < len; i++)
+        {
+            if (arr[i] == value)
+            {
+                return true;
             }
         }
-        return union;
+        return false;
     }
 
-    //교집합 메서드
-    private static ArrayList<Integer> intersection(ArrayList<Integer> setA, ArrayList<Integer> setB) {
-        ArrayList<Integer> intersection = new ArrayList<>();
-        for (int element : setA) {
-            if (setB.contains(element)) { // 공통 원소만 추가
-                intersection.add(element);
+    // 합집합 메서드
+    private static int[] unionSet(int[] a, int[] b)
+    {
+        int[] temp = new int[a.length + b.length];
+        int n;
+
+        // 집합 A의 원소를 temp에 복사
+        for (n = 0; n < a.length; n++)
+        {
+            temp[n] = a[n];
+        }
+
+        // 집합 B의 원소 각각에 대해 A에 이미 있는지 중복 확인 후 없으면 추가
+        for (int i = 0; i < b.length; i++)
+        {
+            if (isInArray(a, a.length, b[i])) // 이미 존재하면 건너뜀
+            {
+                continue;
+            }
+            temp[n] = b[i];
+            n++;
+        }
+
+        // 사용자 정의 복사 메서드를 사용하여 결과 배열 생성
+        int[] result = finalResult(temp, n);
+        return result;
+    }
+
+    // 교집합 메서드
+    private static int[] intersectionSet(int[] a, int[] b)
+    {
+        int[] temp = new int[Math.min(a.length, b.length)];
+        int num = 0;
+
+        // 배열 b의 각 원소가 a에도 존재하는지 확인 (중복 없이 추가)
+        for (int i = 0; i < b.length; i++)
+        {
+            if (isInArray(a, a.length, b[i]) && !isInArray(temp, num, b[i]))
+            {
+                temp[num++] = b[i];
             }
         }
-        return intersection;
+
+        // 사용자 정의 복사 메서드를 사용하여 결과 배열 생성
+        int[] result = finalResult(temp, num);
+        return result;
     }
 
-    //차집합(A - B) 메서드
-    private static ArrayList<Integer> relativeComplementSet(ArrayList<Integer> setA, ArrayList<Integer> setB) {
-        ArrayList<Integer> relativeComplement = new ArrayList<>(setA);
-        relativeComplement.removeAll(setB); // setB의 원소를 제거
-        return relativeComplement;
+    // 차집합 메서드 (A - B)
+    private static int[] relativeComplementSet(int[] a, int[] b)
+    {
+        int[] temp = new int[a.length];
+        int n = 0;
+
+        // 배열 a의 각 원소가 배열 b에 없는 경우에만 추가
+        for (int i = 0; i < a.length; i++)
+        {
+            if (!isInArray(b, b.length, a[i]))
+            {
+                temp[n++] = a[i];
+            }
+        }
+
+        // 사용자 정의 복사 메서드를 사용하여 결과 배열 생성
+        int[] result = finalResult(temp, n);
+        return result;
     }
 
+    // 배열 출력 메서드 : 메서드 결과값을 원소하나씩 불러들임
+    private static void printArray(int[] array)
+    {
+        System.out.print("< ");
+        for (int i = 0; i < array.length; i++)
+        {
+            if (i > 0)
+            {
+                System.out.print(" ");
+            }
+            System.out.print(array[i]);
+        }
+        System.out.println(" >");
+    }
+
+    // 사용자 정의 배열 복사 메서드
+    private static int[] finalResult(int[] tempCount, int length)
+    {
+        //tempCount 배열의 앞쪽 length개 요소를 새 배열로 복사
+        int[] newArray = new int[length];
+        for (int i = 0; i < length; i++)
+        {
+            newArray[i] = tempCount[i];
+        }
+        return newArray;
+    }
 }
