@@ -20,12 +20,12 @@ public class Set {
 
             ArrayList<Integer> union = union(setA, setB);
             ArrayList<Integer> intersection = intersection(setA, setB);
-            ArrayList<Integer> relativeComplement = relativeComplementSet(setA, setB);
+            ArrayList<Integer> difference = relativeComplementSet(setA, setB);
 
 
             System.out.println("합집합: <" + union + " >");
             System.out.println("교집합: <" + intersection + " >");
-            System.out.println("차집합: <" + relativeComplement + " >");
+            System.out.println("차집합: <" + difference + " >");
             System.out.println("계속하려면 아무 키나 누르십시오 . . .");
             sc.nextLine();
             sc.close();
@@ -55,6 +55,7 @@ public class Set {
         return set;
     }
 
+    //합집합 메서드
     private static ArrayList<Integer> union(ArrayList<Integer> setA, ArrayList<Integer> setB) {
         ArrayList<Integer> union = new ArrayList<>(setA);
         for (int element : setB) {
@@ -65,6 +66,7 @@ public class Set {
         return union;
     }
 
+    //교집합 메서드
     private static ArrayList<Integer> intersection(ArrayList<Integer> setA, ArrayList<Integer> setB) {
         ArrayList<Integer> intersection = new ArrayList<>();
         for (int element : setA) {
@@ -75,7 +77,7 @@ public class Set {
         return intersection;
     }
 
-    // 차집합 (A - B) 계산 메서드
+    //차집합(A - B) 메서드
     private static ArrayList<Integer> relativeComplementSet(ArrayList<Integer> setA, ArrayList<Integer> setB) {
         ArrayList<Integer> relativeComplement = new ArrayList<>(setA);
         relativeComplement.removeAll(setB); // setB의 원소를 제거
