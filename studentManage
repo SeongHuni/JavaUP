@@ -1,54 +1,56 @@
 package Programming2;
 
-import java.util.*;
-
 public class StudentManage {
     private static final int menuAddStudent = 1;
-    private static final int menuDeleteStudet = 2;
-    private static final int menuOutputStudet = 3;
+    private static final int menuDeleteStudent = 2;
+    private static final int menuOutputStudent = 3;
     private static final int menuExit = 4;
 
-    private static final List<Student> students = new ArrayList<>();
+    private static final int maxStudent = 100; // 최대 학생 수
+    private static Student[] students = new Student[maxStudent];
+    private static int currentStudent = 0; // 현재 등록된 학생 수
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        java.util.Scanner sc = new java.util.Scanner(System.in);
         boolean flag = true;
 
-        while(flag) {
+        while (flag) {
             System.out.println("======================================");
-            System.out.println("1).학생 추가");
-            System.out.println("2).학생 삭제");
-            System.out.println("3).학생 출력");
-            System.out.println("4).종료");
+            System.out.println(menuAddStudent + "). 학생 추가");
+            System.out.println(menuDeleteStudent + "). 학생 삭제");
+            System.out.println(menuOutputStudent + "). 학생 출력");
+            System.out.println(menuExit + "). 종료");
             System.out.println("======================================");
+            System.out.print("선택하세요: ");
             int choice = sc.nextInt();
 
-            switch (choice){
+            switch (choice) {
                 case menuAddStudent:
-                    //학생 추가
                     addStudent(sc);
                     break;
-                case menuDeleteStudet:
-                    //학생 삭제
+                case menuDeleteStudent:
                     deleteStudent(sc);
                     break;
-                case menuOutputStudet:
-                    //학생 출력
-                    outputStudent(sc);
+                case menuOutputStudent:
+                    outputStudent();
                     break;
                 case menuExit:
-                    //프로그램 종료
-                    System.out.print("프로그램 종료");
+                    System.out.println("프로그램 종료");
                     flag = false;
                     break;
-
-                }
+                default:
+                    System.out.println("잘못된 입력입니다. 다시 시도하세요.");
+            }
         }
     }
 
-    private static void addStudent(Scanner sc){
-        //새로운 학생의 이름, 주소, 핸드폰 번호를 입력받아 추가.
-        sc.nextLine();
+    private static void addStudent(java.util.Scanner sc) {
+        if (currentStudent >= maxStudent) {
+            System.out.println("학생 수가 최대입니다.");
+            return;
+        }
+
+        sc.nextLine(); // 버퍼 비우기
         System.out.print("학생 이름: ");
         String name = sc.nextLine();
         System.out.print("주소: ");
@@ -56,27 +58,67 @@ public class StudentManage {
         System.out.print("핸드폰 번호: ");
         String phone = sc.nextLine();
 
-        Student newStudent = new Student(name,address,phone);
-        students.add(newStudent);
+        students[currentStudent++] = new Student(name, address, phone);
         System.out.println("해당 학생이 추가되었습니다.");
     }
 
-    private static void deleteStudent(Scanner sc){
-        //이름 입력받아 해당 학생 정보 삭제,삭제 후 메세지 출력, 해당 학생 없을 시 없음 출력
-        sc.nextLine();
-        System.out.print("삭제할 학생의 이름을 입력해주세요. :");
+    private static void deleteStudent(java.util.Scanner sc) {
+        sc.nextLine(); // 버퍼 비우기
+        System.out.print("삭제할 학생의 이름을 입력해주세요: ");
         String name = sc.nextLine();
 
-    }
-    
-    private static void outputStudent(Scanner sc){
-        //모든 학생의 정보를 오름차순으로 출력함.
+        boolean found = false;
+        for (int i = 0; i < currentStudent; i++) {
+            if (students[i].getName().equals(name)) {
+                // 배열 요소 삭제 (뒤의 요소들을 앞으로 이동)
+                for (int j = i; j < currentStudent - 1; j++) {
+                    students[j] = students[j + 1];
+                }
+                students[--currentStudent] = null; // 마지막 요소 제거
+                System.out.println("학생이 삭제되었습니다.");
+                found = true;
+                break;
+            }
+        }
 
+        if (!found) {
+            System.out.println("해당 학생 정보 없음");
+        }
     }
 
+    private static void outputStudent() {
+        if (currentStudent == 0) {
+            System.out.println("등록된 학생 정보 없음.");
+            return;
+        }
+
+        // 배열 복사
+        Student[] sortedStudents = new Student[currentStudent];
+        for (int i = 0; i < currentStudent; i++) {
+            sortedStudents[i] = students[i];
+        }
+
+        // 이름 기준 오름차순 정렬
+        for (int i = 0; i < sortedStudents.length - 1; i++) {
+            for (int j = 0; j < sortedStudents.length - 1 - i; j++) {
+                if (sortedStudents[j].getName().compareTo(sortedStudents[j + 1].getName()) > 0) {
+                    // 교환
+                    Student temp = sortedStudents[j];
+                    sortedStudents[j] = sortedStudents[j + 1];
+                    sortedStudents[j + 1] = temp;
+                }
+            }
+        }
+
+        // 정렬된 학생 정보 출력
+        System.out.println("모든 학생 목록:");
+        for (Student s : sortedStudents) {
+            System.out.println("이름: " + s.getName() + ", 주소: " + s.getAddress() + ", 핸드폰 번호: " + s.getPhone());
+        }
+    }
 }
-class Student{
-    //학생의 정보 저장함.
+
+class Student {
     private final String name;
     private final String address;
     private final String phone;
@@ -86,6 +128,7 @@ class Student{
         this.address = address;
         this.phone = phone;
     }
+
     public String getName() {
         return name;
     }
@@ -93,8 +136,8 @@ class Student{
     public String getAddress() {
         return address;
     }
+
     public String getPhone() {
         return phone;
     }
-
 }
