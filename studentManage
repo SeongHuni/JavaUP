@@ -64,7 +64,7 @@ public class StudentManage {
     private static void deleteStudent(Scanner sc){
         //이름 입력받아 해당 학생 정보 삭제,삭제 후 메세지 출력, 해당 학생 없을 시 없음 출력
         sc.nextLine();
-        System.out.println("삭제할 학생의 이름을 입력해주세요. :");
+        System.out.print("삭제할 학생의 이름을 입력해주세요. :");
         String name = sc.nextLine();
 
     }
