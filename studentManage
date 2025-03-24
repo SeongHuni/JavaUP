@@ -1,0 +1,100 @@
+package Programming2;
+
+import java.util.*;
+
+public class StudentManage {
+    private static final int menuAddStudent = 1;
+    private static final int menuDeleteStudet = 2;
+    private static final int menuOutputStudet = 3;
+    private static final int menuExit = 4;
+
+    private static final List<Student> students = new ArrayList<>();
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        boolean flag = true;
+
+        while(flag) {
+            System.out.println("======================================");
+            System.out.println("1).학생 추가");
+            System.out.println("2).학생 삭제");
+            System.out.println("3).학생 출력");
+            System.out.println("4).종료");
+            System.out.println("======================================");
+            int choice = sc.nextInt();
+
+            switch (choice){
+                case menuAddStudent:
+                    //학생 추가
+                    addStudent(sc);
+                    break;
+                case menuDeleteStudet:
+                    //학생 삭제
+                    deleteStudent(sc);
+                    break;
+                case menuOutputStudet:
+                    //학생 출력
+                    outputStudent(sc);
+                    break;
+                case menuExit:
+                    //프로그램 종료
+                    System.out.print("프로그램 종료");
+                    flag = false;
+                    break;
+
+                }
+        }
+    }
+
+    private static void addStudent(Scanner sc){
+        //새로운 학생의 이름, 주소, 핸드폰 번호를 입력받아 추가.
+        sc.nextLine();
+        System.out.print("학생 이름: ");
+        String name = sc.nextLine();
+        System.out.print("주소: ");
+        String address = sc.nextLine();
+        System.out.print("핸드폰 번호: ");
+        String phone = sc.nextLine();
+
+        Student newStudent = new Student(name,address,phone);
+        students.add(newStudent);
+        System.out.println("해당 학생이 추가되었습니다.");
+    }
+
+    private static void deleteStudent(Scanner sc){
+        //이름 입력받아 해당 학생 정보 삭제,삭제 후 메세지 출력, 해당 학생 없을 시 없음 출력
+        sc.nextLine();
+        System.out.println("삭제할 학생의 이름을 입력해주세요. :");
+        String name = sc.nextLine();
+
+    }
+    
+    private static void outputStudent(Scanner sc){
+        //모든 학생의 정보를 오름차순으로 출력함.
+
+    }
+
+}
+class Student{
+    //학생의 정보 저장함.
+    private final String name;
+    private final String address;
+    private final String phone;
+
+    public Student(String name, String address, String phone) {
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+    }
+    public String getName() {
+        return name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+    public String getPhone() {
+        return phone;
+    }
+
+}
