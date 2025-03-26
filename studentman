@@ -1,0 +1,10 @@
+ for (int i = 0; i < sortedStudents.length - 1; i++) {
+        for (int j = 0; j < sortedStudents.length - 1 - i; j++) {
+            // 이름을 비교하여 순서를 바꿈 (내림차순 조건)
+            if (compareName(sortedStudents[j].getName(), sortedStudents[j + 1].getName()) < 0) {
+                Student temp = sortedStudents[j];
+                sortedStudents[j] = sortedStudents[j + 1];
+                sortedStudents[j + 1] = temp;
+            }
+        }
+    }
