@@ -13,16 +13,14 @@ public class StudentManage {
     private static int currentStudent = 0; // 현재 등록된 학생 수
     private static int choice;
 
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        boolean exit = true;
 
-        while(true)
-        {
+        while (exit) {
             choice = printInitialMenu(sc); // 메뉴 출력 및 선택
 
-            switch(choice)
-            {
+            switch (choice) {
                 case INSERT:
                     addStudent(sc);// 학생 명단 추가
                     break;
@@ -33,15 +31,14 @@ public class StudentManage {
                     outputStudent();// 학생 명단 출력
                     break;
                 case EXIT:
-                    // 종료 - while문 빠져나감
+                    exit = false; // 종료 - while문 빠져나감
                     break;
             }
         }
+        sc.close(); // Scanner 종료
     }
 
-    // 초기 메뉴를 출력하고 선택을 입력받는 메서드
-    private static int printInitialMenu(Scanner sc)
-    {
+    private static int printInitialMenu(Scanner sc) {
         System.out.println("======================================");
         System.out.println(INSERT + "). 학생 추가");
         System.out.println(DELETE + "). 학생 삭제");
@@ -49,41 +46,61 @@ public class StudentManage {
         System.out.println(EXIT + "). 종료");
         System.out.println("======================================");
         System.out.print("선택하세요: ");
-        return sc.nextInt(); // 사용자 입력 반환
+        while (!sc.hasNextInt()) {
+            System.out.println("숫자를 입력해주세요.");
+            sc.next(); // 유효하지 않은 입력 제거
+        }
+        return sc.nextInt();
     }
 
-    private static void addStudent(java.util.Scanner sc)
-    {
-        if (currentStudent >= maxStudent)
-        {
+    private static void addStudent(Scanner sc) {
+        sc.nextLine(); // 버퍼 비우기
+        if (currentStudent >= maxStudent) {
             System.out.println("학생 수가 최대입니다.");
             return;
         }
-
         System.out.print("학생 이름: ");
-        String name = sc.nextLine(); // 이름 입력
+        String name = sc.nextLine();
+        if (duplicate(name)) {
+            System.out.println("Error: 동일한 이름의 학생이 이미 존재합니다.");
+            return;
+        }
         System.out.print("주소: ");
-        String address = sc.nextLine(); // 주소 입력
+        String address = sc.nextLine();
         System.out.print("핸드폰 번호: ");
-        String phone = sc.nextLine(); // 핸드폰 번호 입력
+        String phone;
+        while (true) {
+            phone = sc.nextLine();
+            if (isValidPhoneNumber(phone)) {
+                break;
+            } else {
+                System.out.println("Error: 전화번호 형식이 아닙니다. 다시 입력해주세요.");
+            }
+        }
 
         students[currentStudent++] = new Student(name, address, phone); // 배열에 학생 추가
         System.out.println("해당 학생이 추가되었습니다.");
     }
 
-    private static void deleteStudent(java.util.Scanner sc)
-    {
+    private static boolean duplicate(String name) {
+        for (int i = 0; i < currentStudent; i++) {
+            if (students[i].getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void deleteStudent(Scanner sc) {
+        sc.nextLine(); // 버퍼 비우기
         System.out.print("삭제할 학생의 이름을 입력해주세요: ");
         String name = sc.nextLine();
 
         boolean found = false; // 삭제 여부를 추적
-        for (int i = 0; i < currentStudent; i++)
-        {
-            if (students[i].getName().equals(name))
-            {
+        for (int i = 0; i < currentStudent; i++) {
+            if (students[i].getName().equals(name)) {
                 // 배열 요소 삭제 (뒤의 요소들을 앞으로 이동)
-                for (int j = i; j < currentStudent - 1; j++)
-                {
+                for (int j = i; j < currentStudent - 1; j++) {
                     students[j] = students[j + 1];
                 }
                 students[--currentStudent] = null; // 마지막 요소 제거
@@ -93,37 +110,27 @@ public class StudentManage {
             }
         }
 
-        if (!found)
-        {
+        if (!found) {
             System.out.println("해당 학생 정보 없음");
         }
     }
 
-    private static void outputStudent()
-    {
-        if (currentStudent == 0)
-        {
+    private static void outputStudent() {
+        if (currentStudent == 0) {
             System.out.println("등록된 학생 정보 없음.");
             return;
         }
 
-        // 배열 복사
         Student[] sortedStudents = new Student[currentStudent];
-        for (int i = 0; i < currentStudent; i++)
-        {
+        for (int i = 0; i < currentStudent; i++) {
             sortedStudents[i] = students[i];
         }
-
+        
         // 이름 기준 오름차순 정렬
-        for (int i = 0; i < sortedStudents.length - 1; i++)
-        {
-            for (int j = 0; j < sortedStudents.length - 1 - i; j++)
-            {
-
-                // 이름을 비교하여 순서를 바꿈
-                if (compareName(sortedStudents[j].getName(), sortedStudents[j + 1].getName()) > 0)
-                {
-                    // 두 학생 정보를 교환
+        for (int i = 0; i < sortedStudents.length - 1; i++) {
+            for (int j = 0; j < sortedStudents.length - 1 - i; j++) {
+                if (sortedStudents[j].getName().compareTo(sortedStudents[j + 1].getName()) > 0) {
+                    // 교환
                     Student temp = sortedStudents[j];
                     sortedStudents[j] = sortedStudents[j + 1];
                     sortedStudents[j + 1] = temp;
@@ -133,57 +140,36 @@ public class StudentManage {
 
         // 정렬된 학생 정보 출력
         System.out.println("모든 학생 목록:");
-        for (Student s : sortedStudents)
-        {
+        for (Student s : sortedStudents) {
             System.out.println("이름: " + s.getName() + ", 주소: " + s.getAddress() + ", 핸드폰 번호: " + s.getPhone());
         }
     }
 
-    private static int compareName(String name1, String name2)
-    {
-        int i = 0;
-
-        // 두 문자열의 짧은 길이를 기준으로 비교
-        while (i < Math.min(name1.length(), name2.length()))
-        {
-            char c1 = name1.charAt(i); // 첫 번째 문자열의 i번째 문자
-            char c2 = name2.charAt(i); // 두 번째 문자열의 i번째 문자
-            if (c1 != c2)
-            { // 두 문자가 다르면 차이를 반환
-                return c1 - c2;
-            }
-            i++; // 다음 문자로 이동
-        }
-
-        return name1.length() - name2.length();
+    private static boolean isValidPhoneNumber(String phone) {
+        return phone.matches("^010-\\d{4}-\\d{4}$");
     }
 }
 
-class Student
-{
+class Student {
     private final String name; // 학생 이름
     private final String address; // 학생 주소
     private final String phone; // 학생 핸드폰 번호
 
-    public Student(String name, String address, String phone)
-    {
+    public Student(String name, String address, String phone) {
         this.name = name;
         this.address = address;
         this.phone = phone;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return address;
     }
 
-    public String getPhone()
-    {
+    public String getPhone() {
         return phone;
     }
 }
