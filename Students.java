@@ -1,42 +1,41 @@
-package Modified3;
+package Programming4;
 
 public class Students implements Comparable<Students> {
-    private String name;
-    private String address;
-    private String phoneNumber;
+  private String name;
+  private String studentId;
+  private String address;
 
-    public Students(String name, String address, String phoneNumber) {
-        this.name = name;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-    }
+  public Students(String name, String studentId, String address) {
+    this.name = name;
+    this.studentId = studentId;
+    this.address = address;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public String getName() {
+    return name;
+  }
+  public String getStudentId() {
+    return studentId; // 학번 반환
+  }
+  public String getAddress() {
+    return address;
+  }
 
-    public String getAddress() {
-        return address;
+  @Override
+  public int compareTo(Students o) {
+    int compare = name.compareTo(o.name );
+    if (compare == 0) {
+      compare = studentId.compareTo(o.studentId);
+      if (compare == 0) {
+        return address.compareTo(o.address);
+      }
     }
+    return compare;
+  }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+  @Override
+  public String toString() {
+    return "['학생 이름:'" + name + "', 학번='" + studentId + "', 주소='" + address + "']" ;
+  }
 
-    @Override
-    public int compareTo(Students o) {
-        int compare = name.compareTo(o.name);
-        if (compare == 0) {
-            compare = address.compareTo(o.address);
-            if (compare == 0) {
-                return phoneNumber.compareTo(o.phoneNumber);
-            }
-        }
-        return compare;
-    }
-
-    @Override
-    public String toString() {
-        return "Student{name='" + name + "', address='" + address + "', phoneNumber='" + phoneNumber + "'}";
-    }
 }
