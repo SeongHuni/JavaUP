@@ -7,3 +7,8 @@ public void resetFile(String file) {
         System.out.println("오류가 발생: " + e.getMessage());
     }
 }
+
+// studentList를 초기화
+studentList = new StudentList();
+// 빈 상태에서 저장 호출
+studentList.save(file);
