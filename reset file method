@@ -1,0 +1,9 @@
+// 파일 초기화 메서드
+public void resetFile(String file) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, false))) {
+        writer.write(""); // 파일 내용을 빈 문자열로 덮어쓰기
+        System.out.println("파일 초기화 완료.");
+    } catch (IOException e) {
+        System.out.println("오류가 발생: " + e.getMessage());
+    }
+}
