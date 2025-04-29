@@ -1,0 +1,11 @@
+// 도형 삭제
+    private static void delete(List<Shape> shapes) {
+        String id = io.getShapeId(); // 삭제할 ID 입력
+        Shape found = find(shapes, id); // 도형 찾기
+        if (found == null) {
+            System.out.println("존재하지 않는 도형입니다.");
+        } else {
+            shapes.remove(found); // 도형 삭제
+            System.out.println("도형이 삭제되었습니다.");
+        }
+    }
