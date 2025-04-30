@@ -1,0 +1,51 @@
+public class Shape implements Serializable {
+    // 기존 필드 및 생성자 생략
+
+    public double getArea() {
+        return 0; // 자식 클래스에서 오버라이드
+    }
+
+    public double getDistance() {
+        return Math.sqrt(x * x + y * y);
+    }
+}
+
+public class Circle extends Shape {
+    // 기존 코드 생략
+    @Override
+    public double getArea() {
+        return area;
+    }
+}
+
+private void sortList(List<Shape> list) {
+    for (int i = 0; i < list.size() - 1; i++) {
+        for (int j = 0; j < list.size() - i - 1; j++) {
+            if (list.get(j).getArea() < list.get(j + 1).getArea()) {
+                list.changeArray(j, j + 1);
+            }
+        }
+    }
+}
+
+// 버블 정렬 - 면적 내림차순
+    private void sortByAreaDesc(List<Shape> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - i - 1; j++) {
+                if (list.get(j).getArea() < list.get(j + 1).getArea()) {
+                    list.changeArray(j, j + 1);
+                }
+            }
+        }
+    }
+
+// 버블 정렬 - 거리 오름차순
+    private void sortByDistanceAsc(List<Shape> list) {
+        for (int i = 0; i < list.size() - 1; i++) {
+            for (int j = 0; j < list.size() - i - 1; j++) {
+                if (list.get(j).getDistance() > list.get(j + 1).getDistance()) {
+                    list.changeArray(j, j + 1);
+                }
+            }
+        }
+    }
